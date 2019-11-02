@@ -48,12 +48,13 @@ class LookAndSayTest {
 
     @Test
     internal fun `part 1`() {
-//        println(lookAndSay("1113222113", 40).length)
+        println(lookAndSay("1113222113", 40).length)
         // 252594
     }
 
     @Test
     internal fun `part 2`() {
-        println(lookAndSay("1113222113", 45).length)
+        println(lookAndSay("1113222113", 50).length)
+        // 3579328
     }
 }
