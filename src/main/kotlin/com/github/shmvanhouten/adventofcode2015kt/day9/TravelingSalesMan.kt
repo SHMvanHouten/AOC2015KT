@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2015kt.day9
 
+import com.github.shmvanhouten.adventofcode2015kt.util.getAllRoutes
 import java.lang.RuntimeException
 
 fun findShortestDistance(vararg pairDistances: PairDistance): Int? {
@@ -50,22 +51,6 @@ fun getDistance(origin: String, destination: String, pairDistances: List<PairDis
                 || (it.destination == origin && it.origin == destination)
     }?.distance ?: throw RuntimeException("No distance found for $origin and $destination")
 }
-
-private fun getAllRoutes(nodes: List<String>) = findRoutes(nodes, emptyList(), emptyList())
-
-fun findRoutes(
-    nodes: List<String>,
-    routes: List<List<String>>,
-    currentRoute: List<String>
-): List<List<String>> {
-    return if (atEndOfRoute(nodes)) {
-        routes.plus(listOf(currentRoute))
-    } else {
-        nodes.flatMap { node -> findRoutes(nodes.minus(node), routes, currentRoute.plus(node)) }
-    }
-}
-
-private fun atEndOfRoute(nodes: List<String>) = nodes.isEmpty()
 
 fun getDistinctNodes(pairDistances: List<PairDistance>): List<String> {
     return pairDistances.map { it.origin }
