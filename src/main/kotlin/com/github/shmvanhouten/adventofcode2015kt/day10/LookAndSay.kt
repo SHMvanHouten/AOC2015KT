@@ -30,8 +30,8 @@ fun lookAndSay(input: String): String {
             result.append(occurrence)
             result.append(prevChar)
             occurrence = 1
+            prevChar = c
         }
-        prevChar = c
     }
     result.append(occurrence)
     result.append(prevChar)
