@@ -11,12 +11,12 @@ fi
 echo "fetching input for day $DD"
 DAY=$((10#$DD))
 
-mkdir src/main/kotlin/com/github/shmvanhouten/adventofcode2015/day"${DD}"
-mkdir src/test/kotlin/com/github/shmvanhouten/adventofcode2015/day"${DD}"
+mkdir src/main/kotlin/com/github/shmvanhouten/adventofcode2015kt/day"${DD}"
+mkdir src/test/kotlin/com/github/shmvanhouten/adventofcode2015kt/day"${DD}"
 
 curl --cookie "session=$cookie;" https://adventofcode.com/2015/day/${DAY}/input -o src/main/resources/input-day"${DD}".txt -s
 
-echo "package com.github.shmvanhouten.adventofcode2015.day${DD}
+echo "package com.github.shmvanhouten.adventofcode2015kt.day${DD}
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
@@ -34,6 +34,6 @@ class Day${DD}Test {
         }
     }
 
-}" > ./src/test/kotlin/com/github/shmvanhouten/adventofcode2015/day"${DD}"/Day"${DD}"Test.kt
+}" > ./src/test/kotlin/com/github/shmvanhouten/adventofcode2015kt/day"${DD}"/Day"${DD}"Test.kt
 
-open https://adventofcode.com/2015/day/${DAY}
+#open https://adventofcode.com/2015/day/${DAY}
