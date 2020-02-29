@@ -14,22 +14,3 @@ private fun playerWinsBattle(
     val equippedPlayer = player.equip(equipment = equipment)
     return battle(equippedPlayer, boss).winner == player
 }
-
-fun permuteEquipments(shop: Shop): List<Equipment> {
-    return shop.weapons
-        .flatMap { weapon ->
-            addEmptySlot(shop.armors).map { armor -> Equipment(weapon, armor) }
-        }
-        .flatMap { equipment ->
-            addEmptySlot(shop.rings).map { ring -> equipment.copy(ring1 = ring) }
-        }
-        .flatMap { equipment ->
-            addEmptySlot(shop.rings.minus(equipment.ring1)).map { ring -> equipment.copy(ring2 = ring) }
-        }
-}
-
-private fun <T> addEmptySlot(rings: List<T?>): List<T?> {
-    val possibleEquips = rings.toMutableList()
-    possibleEquips.add(null)
-    return possibleEquips
-}

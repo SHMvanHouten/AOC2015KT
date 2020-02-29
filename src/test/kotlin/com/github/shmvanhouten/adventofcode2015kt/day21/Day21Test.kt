@@ -37,6 +37,15 @@ class Day21Test {
             val equipment = findMostEfficientEquipCost(player, boss)
             assertThat(equipment.totalValue(), equalTo(91))
         }
+
+        @Test
+        internal fun `part 2`() {
+            val player = Character("player", hitPoints = 100)
+            val boss = Character("boss", damage = 8, armor = 2, hitPoints = 100)
+
+            val equipment = findLeastEfficientEquipCost(player, boss)
+            assertThat(equipment.totalValue(), equalTo(158))
+        }
     }
 
 }
