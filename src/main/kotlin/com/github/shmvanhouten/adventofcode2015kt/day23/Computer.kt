@@ -10,16 +10,9 @@ class Computer(val instructions: List<Instruction> = emptyList()) {
 
     fun execute() {
         instructions.forEach { instruction ->
-            if(instruction.type == InstructionType.INC) {
-                registers[instruction.register]!!.inc()
-                    .let { registers[instruction.register!!] = it }
-            } else if (instruction.type == InstructionType.TPL){
-                registers[instruction.register]!!.times(3)
-                    .let { registers[instruction.register!!] = it }
-            } else {
-                registers[instruction.register]!!.div(2)
-                    .let { registers[instruction.register!!] = it }
-            }
+            registers[instruction.register]!!
+                .let { instruction.type.evaluate(it) }
+                .let { registers[instruction.register!!] = it }
         }
     }
 }

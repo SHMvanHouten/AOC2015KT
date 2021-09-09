@@ -10,7 +10,15 @@ data class Instruction(
 enum class InstructionType {
     INC,
     TPL,
-    HLF
+    HLF;
+
+    fun evaluate(input: Long): Long {
+        return when(this) {
+            INC -> input + 1
+            TPL -> input * 3
+            HLF -> input / 2
+        }
+    }
 }
 
 enum class Register {
