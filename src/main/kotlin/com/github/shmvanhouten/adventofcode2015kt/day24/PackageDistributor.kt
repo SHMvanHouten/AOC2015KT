@@ -1,60 +1,76 @@
 package com.github.shmvanhouten.adventofcode2015kt.day24
 
-import kotlin.math.abs
+fun findBestFirstPackageGroup(packages: String): Group {
+    return packages.lines()
+        .map { it.toInt() }
+        .let { findShortestFirstPackageGroups(it) }
+        .sortedBy { group -> group.map { it.toLong() }.reduce(Long::times) }
+        .first() // todo first that has can fill the other groups
+}
+
+fun findShortestFirstPackageGroups(packages: Group): List<Group> {
+    if (packages.sum() % 3 != 0) error("packages can not be divided evenly")
+    val groupSize = packages.sum() / 3
+    val groups = packages
+        .permuteGroupsOfWeight(groupSize)
+    return groups.filter { it.size == groups.minOf { it.size } }
+}
+
 
 fun packageDistributions(packages: String): List<Distribution> {
     return packages.lines()
         .map { it.toInt() }
-        .let { permuteDistributionsTo3Gourps(it) }
+        .let { permuteDistributionsTo3Groups(it) }
 }
 
-fun permuteDistributionsTo3Gourps(packages: List<Int>): List<Distribution> {
+fun permuteDistributionsTo3Groups(packages: List<Int>): List<Distribution> {
+    if (packages.sum() % 3 != 0) error("packages can not be divided evenly")
+    val groupSize = packages.sum() / 3
     return packages
-        .permuteToTwoWeightedLists(list1Weight = 2)
-        .permuteToThreeWeightedLists()
+        .permuteGroupsOfWeight(groupSize)
+        .map { it.sorted() }
+        .distinct()
+        .permute()
         .map { toDistribution(it) }
 }
 
-fun toDistribution(lists: Triple<List<Int>, List<Int>, List<Int>>): Distribution {
-    return Distribution(lists.first, lists.second, lists.third)
-}
-
-private fun List<Pair<List<Int>, List<Int>>>.permuteToThreeWeightedLists(): List<Triple<List<Int>, List<Int>, List<Int>>> {
-    return this.flatMap { (firstList, secondList) -> secondList.permuteToTwoWeightedLists().map { Triple(firstList, it.first, it.second) } }
-}
-
-private fun List<Int>.permuteToTwoWeightedLists(
-    list1: List<Int> = emptyList(),
-    list2: List<Int> = emptyList(),
-    list1Weight: Int = 1
-): List<Pair<List<Int>, List<Int>>> {
-    when {
-//        abs(list1.sum() * list1Weight - list2.sum()) > this.sum() * list1Weight -> {
-//            return emptyList()
-//        }
-        this.isEmpty() -> {
-            return if(list1.sum() * list1Weight == list2.sum()) {
-                listOf(list1 to list2)
-            } else {
-                emptyList()
-            }
-        }
-        else -> {
-            return this.map { element: Int ->
-                val rest = this - element
-                return rest.permuteToTwoWeightedLists(list1 + element, list2, list1Weight) + rest.permuteToTwoWeightedLists(list1, list2 + element, list1Weight)
-            }.flatten()
-
-        }
+private fun List<Int>.permuteGroupsOfWeight(groupSize: Int, groupSoFar: List<Int> = emptyList()): List<List<Int>> {
+    return if (groupSoFar.sum() == groupSize) {
+        listOf(groupSoFar)
+    } else if (groupSoFar.sum() > groupSize) {
+        emptyList()
+    } else {
+        return this.mapIndexed { index, element: Int ->
+            val rest = this.subList(index + 1, this.size)
+            rest.permuteGroupsOfWeight(groupSize, groupSoFar + element)
+        }.flatten()
     }
 }
 
-private fun <E> List<E>.subList(fromIndex: Int): List<E> {
-    return this.subList(fromIndex, this.size)
+private fun List<Group>.permute(groupsCombinationsSoFar: List<Group> = emptyList()): List<List<Group>> {
+    if (this.isEmpty() && groupsCombinationsSoFar.size == 3) {
+        return listOf(groupsCombinationsSoFar)
+    } else if (this.isEmpty()) {
+        return emptyList()
+    } else {
+
+        return this.map { group: Group ->
+            val otherAvailableGroups: List<Group> = this
+                .filter { otherGroup -> group.none { otherGroup.contains(it) } }
+
+            otherAvailableGroups.permute(groupsCombinationsSoFar.plusElement(group))
+        }.flatten()
+    }
+}
+
+fun toDistribution(lists: List<List<Int>>): Distribution {
+    return Distribution(lists[0], lists[1], lists[2])
 }
 
 data class Distribution(
-    val group1: List<Int>,
-    val group2: List<Int>,
-    val group3: List<Int>
+    val group1: Group,
+    val group2: Group,
+    val group3: Group
 )
+
+typealias Group = List<Int>

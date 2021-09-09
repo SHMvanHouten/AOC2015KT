@@ -39,8 +39,41 @@ class Day24Test {
 
         @Test
         internal fun `part 2 can it handle the recursion`() {
+            // not enough time in the universe
             val packages = readFile("/input-day24.txt")
-            packageDistributions(packages)
+//            println(packageDistributions(packages).size)
+        }
+
+        @Test
+        internal fun `example 1`() {
+            val packages = """
+                1
+                2
+                3
+                4
+                5
+                7
+                8
+                9
+                10
+                11
+            """.trimIndent()
+
+            val bestFirstPackageGroup = findBestFirstPackageGroup(packages)
+            assertThat(
+                bestFirstPackageGroup.map { it.toLong() }.reduce(Long::times),
+                equalTo(99)
+            )
+        }
+
+        @Test
+        internal fun `part 1`() {
+            val packages = readFile("/input-day24.txt")
+            val bestFirstPackageGroup = findBestFirstPackageGroup(packages)
+            assertThat(
+                bestFirstPackageGroup.map { it.toLong() }.reduce(Long::times),
+                equalTo(99)
+            )
         }
     }
 
