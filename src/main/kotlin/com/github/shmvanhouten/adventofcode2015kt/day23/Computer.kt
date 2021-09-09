@@ -9,10 +9,17 @@ class Computer(val instructions: List<Instruction> = emptyList()) {
         get() = registers[Register.B]!!
 
     fun execute() {
-        instructions.forEach { instruction ->
-            registers[instruction.register]!!
-                .let { instruction.type.evaluate(it) }
-                .let { registers[instruction.register!!] = it }
+        var pointer = 0
+        while (pointer < instructions.size) {
+            val instruction = instructions[pointer]
+            if(instruction.type.isAnEvalType()) {
+                registers[instruction.register]!!
+                    .let { instruction.type.evaluate(it) }
+                    .let { registers[instruction.register!!] = it }
+                pointer++
+            } else {
+                pointer += instruction.amount!!
+            }
         }
     }
 }
@@ -25,15 +32,21 @@ private fun parseInstructions(instructions: String): List<Instruction> {
 fun toInstruction(raw: String) : Instruction {
     val split = raw.split(" ")
     return when(val type = split[0].toType()) {
-        InstructionType.INC, InstructionType.TPL, InstructionType.HLF -> Instruction(type, Register.valueOf(split[1].toUpperCase()))
+        InstructionType.INC,
+        InstructionType.TPL,
+        InstructionType.HLF -> Instruction(type, Register.valueOf(split[1].toUpperCase()))
+        InstructionType.JMP -> Instruction(type = type, amount = toJumpAmount(split[1]))
+    }
+}
+
+fun toJumpAmount(raw: String): Int {
+    if(raw[0] == '+') {
+        return raw.substring(1).toInt()
+    } else {
+        return raw.toInt()
     }
 }
 
 private fun String.toType(): InstructionType {
-    return when(this) {
-        "inc" -> InstructionType.INC
-        "tpl" -> InstructionType.TPL
-        "hlf" -> InstructionType.HLF
-        else -> error("unknown instruction $this")
-    }
+    return InstructionType.valueOf(this.toUpperCase())
 }

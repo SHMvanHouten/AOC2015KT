@@ -7,17 +7,29 @@ data class Instruction(
     val amount: Int? = null
 )
 
+private val EVAL_TYPES = setOf(
+    InstructionType.INC,
+    InstructionType.TPL,
+    InstructionType.HLF
+)
 enum class InstructionType {
     INC,
     TPL,
-    HLF;
+    HLF,
+    JMP;
 
     fun evaluate(input: Long): Long {
         return when(this) {
             INC -> input + 1
             TPL -> input * 3
             HLF -> input / 2
+            else -> error("instruction $this does not have evaluate")
         }
+    }
+
+
+    fun isAnEvalType(): Boolean {
+        return EVAL_TYPES.contains(this)
     }
 }
 

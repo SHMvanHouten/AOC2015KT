@@ -95,6 +95,28 @@ class Day23Test {
                 computer.execute()
                 assertThat(computer.a, equalTo(1))
             }
+
+            @Test
+            internal fun `jmp offset + 1 jumps to the next instruction`() {
+                val instructions = """jmp +1
+                    |inc a
+                """.trimMargin()
+                val computer = Computer(instructions)
+                computer.execute()
+                assertThat(computer.a, equalTo(1))
+            }
+
+            @Test
+            internal fun `jmp offset +2 jumps to the next instruction`() {
+                val instructions = """jmp +2
+                    |inc a
+                    |inc b
+                """.trimMargin()
+                val computer = Computer(instructions)
+                computer.execute()
+                assertThat(computer.a, equalTo(0))
+                assertThat(computer.b, equalTo(1))
+            }
         }
     }
 
