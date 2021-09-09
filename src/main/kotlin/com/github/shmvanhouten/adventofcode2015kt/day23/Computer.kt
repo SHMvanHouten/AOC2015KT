@@ -14,26 +14,32 @@ class Computer(val instructions: List<Instruction> = emptyList()) {
         while (pointer < instructions.size) {
             val instruction = instructions[pointer]
             if (instruction.type.isAnEvalType()) {
-                registers[instruction.register]!!
-                    .let { instruction.type.evaluate(it) }
-                    .let { registers[instruction.register!!] = it }
+                updateRegister(instruction)
                 pointer++
-            } else if (instruction.type == InstructionType.JIE) {
-                if (registers[instruction.register]!!.isEven()) {
-                    pointer += instruction.amount!!
-                } else {
-                    pointer++
-                }
+
+            } else if (instruction.type.isConditionalJumpType()) {
+                pointer += evaluateJumpAmount(instruction)
+
             } else {
                 pointer += instruction.amount!!
             }
         }
     }
+
+    private fun updateRegister(instruction: Instruction) {
+        registers[instruction.register]!!
+            .let { instruction.type.evaluate(it) }
+            .let { registers[instruction.register!!] = it }
+    }
+
+    private fun evaluateJumpAmount(instruction: Instruction) =
+        if (registers[instruction.register]!!
+                .let { instruction.type.evaluatesToTrue(it) }
+        ) {
+            instruction.amount!!
+        } else 1
 }
 
-private fun Long.isEven(): Boolean {
-    return this % 2 == 0L
-}
 
 private fun parseInstructions(instructions: String): List<Instruction> {
     return instructions.lines()
@@ -47,15 +53,16 @@ fun toInstruction(raw: String): Instruction {
         InstructionType.TPL,
         InstructionType.HLF -> Instruction(type, Register.valueOf(split[1].toUpperCase()))
         InstructionType.JMP -> Instruction(type = type, amount = toJumpAmount(split[1]))
-        InstructionType.JIE -> Instruction(type, Register.valueOf(split[1].toUpperCase()), toJumpAmount(split[2]))
+        InstructionType.JIE,
+        InstructionType.JIO -> Instruction(type, Register.valueOf(split[1].toUpperCase()), toJumpAmount(split[2]))
     }
 }
 
 fun toJumpAmount(raw: String): Int {
-    if (raw[0] == '+') {
-        return raw.substring(1).toInt()
+    return if (raw[0] == '+') {
+        raw.substring(1).toInt()
     } else {
-        return raw.toInt()
+        raw.toInt()
     }
 }
 

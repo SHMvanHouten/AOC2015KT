@@ -139,6 +139,22 @@ class Day23Test {
                 computer.execute()
                 assertThat(computer.b, equalTo(0))
             }
+
+            @Test
+            internal fun `jio a +2 jumps if 1 is 1`() {
+                val instructions = """inc a
+                    |jio a +2
+                    |inc b
+                """.trimMargin()
+                val computer = Computer(instructions)
+                computer.execute()
+                assertThat(computer.b, equalTo(0))
+            }
+        }
+
+        @Test
+        internal fun `example 1`() {
+
         }
     }
 
