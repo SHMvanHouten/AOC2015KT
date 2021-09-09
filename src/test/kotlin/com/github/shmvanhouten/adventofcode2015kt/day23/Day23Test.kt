@@ -84,6 +84,17 @@ class Day23Test {
                 computer.execute()
                 assertThat(computer.b, equalTo(3))
             }
+
+            @Test
+            internal fun `inc a inc a then hlf a sets a to 1`() {
+                val instructions = """inc a
+                    |inc a
+                    |hlf a
+                """.trimMargin()
+                val computer = Computer(instructions)
+                computer.execute()
+                assertThat(computer.a, equalTo(1))
+            }
         }
     }
 

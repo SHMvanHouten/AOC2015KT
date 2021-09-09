@@ -9,7 +9,8 @@ data class Instruction(
 
 enum class InstructionType {
     INC,
-    TPL
+    TPL,
+    HLF
 }
 
 enum class Register {

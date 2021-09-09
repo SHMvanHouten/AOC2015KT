@@ -13,8 +13,11 @@ class Computer(val instructions: List<Instruction> = emptyList()) {
             if(instruction.type == InstructionType.INC) {
                 registers[instruction.register]!!.inc()
                     .let { registers[instruction.register!!] = it }
-            } else {
+            } else if (instruction.type == InstructionType.TPL){
                 registers[instruction.register]!!.times(3)
+                    .let { registers[instruction.register!!] = it }
+            } else {
+                registers[instruction.register]!!.div(2)
                     .let { registers[instruction.register!!] = it }
             }
         }
@@ -29,7 +32,7 @@ private fun parseInstructions(instructions: String): List<Instruction> {
 fun toInstruction(raw: String) : Instruction {
     val split = raw.split(" ")
     return when(val type = split[0].toType()) {
-        InstructionType.INC, InstructionType.TPL -> Instruction(type, Register.valueOf(split[1].toUpperCase()))
+        InstructionType.INC, InstructionType.TPL, InstructionType.HLF -> Instruction(type, Register.valueOf(split[1].toUpperCase()))
     }
 }
 
@@ -37,6 +40,7 @@ private fun String.toType(): InstructionType {
     return when(this) {
         "inc" -> InstructionType.INC
         "tpl" -> InstructionType.TPL
+        "hlf" -> InstructionType.HLF
         else -> error("unknown instruction $this")
     }
 }
