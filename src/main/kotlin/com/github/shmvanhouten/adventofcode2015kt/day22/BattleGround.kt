@@ -6,9 +6,12 @@ private const val DRAIN_DAMAGE = 2
 data class BattleGround(
     val player: Player,
     val boss: Boss,
-    val turn: Turn = Turn.PLAYER
+    val turn: Turn = Turn.PLAYER,
+    val hardModeDamage:Int = 0
 ) {
+
     fun passTurn(effect: Effect? = null): BattleGround {
+
         val updatedPlayer = player.applyEffects()
         val updatedBoss = boss.applyEffects()
 
@@ -70,7 +73,11 @@ data class BattleGround(
     }
 
     fun effectCanBeCast(effect: Effect): Boolean {
-        return when(effect) {
+        return player.mana >= effect.manaCost && effectIsOffCooldown(effect)
+    }
+
+    private fun effectIsOffCooldown(effect: Effect): Boolean {
+        return when (effect) {
             Effect.MAGIC_MISSILE, Effect.DRAIN -> true
             Effect.SHIELD -> player.shield <= 1
             Effect.POISON -> boss.poison <= 1

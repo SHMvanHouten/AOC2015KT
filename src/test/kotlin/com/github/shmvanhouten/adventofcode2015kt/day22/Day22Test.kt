@@ -122,8 +122,25 @@ class Day22Test {
             val hitPoints = 58
             val damage = 9
             assertThat(
-                findMostManaEfficientBattle(Player(), Boss(damage, hitPoints)),
-                equalTo(123)
+                findMostManaEfficientBattle(Player(), Boss(damage, hitPoints), 1),
+                equalTo(1269)
+            )
+        }
+    }
+
+    @Nested
+    inner class Part_2 {
+        @Test
+        internal fun `part 2`() {
+            val hitPoints = 58
+            val damage = 9
+            assertThat(
+                findMostManaEfficientBattle(
+                    player = Player(),
+                    boss = Boss(damage, hitPoints),
+                    hardModeDamage = 1
+                ),
+                equalTo(1269)
             )
         }
     }

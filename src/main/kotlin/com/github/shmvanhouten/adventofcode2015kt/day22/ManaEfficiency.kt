@@ -1,26 +1,51 @@
 package com.github.shmvanhouten.adventofcode2015kt.day22
 
-fun findMostManaEfficientBattle(player: Player, boss: Boss): Int? {
+import com.github.shmvanhouten.adventofcode2020.util.queueOf
+import java.util.*
 
-    return BattleGround(player, boss)
-        .permuteBattlesWherePlayerWon()
+fun findMostManaEfficientBattle(player: Player, boss: Boss, hardModeDamage: Int = 0): Int? {
+
+    return permuteBattlesWherePlayerWon(BattleGround(player, boss, hardModeDamage = hardModeDamage))
         .map { it.second }
         .map { it.sumBy { effect -> effect.manaCost } }
         .maxOrNull()
 }
 
-private tailrec fun BattleGround.permuteBattlesWherePlayerWon(effectsUsed: List<Effect> = emptyList()): List<Pair<BattleGround, List<Effect>>> {
-    if (this.playerWon()) {
-        return listOf(this to effectsUsed)
-    } else if (this.bossWon()) {
-        return emptyList()
+private fun permuteBattlesWherePlayerWon(startingBattleGround: BattleGround): List<Pair<BattleGround, List<Effect>>> {
+    val unfinishedBattles: Queue<Pair<BattleGround, List<Effect>>> = queueOf(startingBattleGround to emptyList())
+    val finishedBattles: MutableList<Pair<BattleGround, List<Effect>>> = mutableListOf()
+    var maxManaUsed = Int.MAX_VALUE
+
+    while (unfinishedBattles.isNotEmpty()) {
+        val (battleGround, effectsUsed) = unfinishedBattles.poll()
+        val manaUsed = effectsUsed.sumBy { it.manaCost }
+        when {
+            manaUsed > maxManaUsed -> {
+                // do nothing
+            }
+            battleGround.bossWon() -> {
+                // do nothing
+            }
+            battleGround.playerWon() -> {
+
+                if(manaUsed <= maxManaUsed)
+                    finishedBattles.add(battleGround to effectsUsed)
+                    maxManaUsed = manaUsed
+
+            }
+            battleGround.turn == Turn.BOSS -> {
+                unfinishedBattles.offer(battleGround.passTurn() to effectsUsed)
+            }
+            else -> {
+                Effect.values()
+                    .filter { battleGround.effectCanBeCast(it) }
+                    .map {
+                        battleGround.passTurn(it) to it
+                    }.forEach {
+                        unfinishedBattles.offer(it.first to effectsUsed + it.second)
+                    }
+            }
+        }
     }
-    if (this.turn != Turn.BOSS) {
-        return Effect.values()
-            .filter { this.effectCanBeCast(it) }
-            .map {
-                this.passTurn(it).permuteBattlesWherePlayerWon()
-            }.flatten()
-    }
-    return this.passTurn().permuteBattlesWherePlayerWon()
+    return finishedBattles.toList()
 }
