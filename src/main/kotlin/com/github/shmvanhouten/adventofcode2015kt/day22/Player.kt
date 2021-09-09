@@ -29,6 +29,12 @@ data class Player(
         )
     }
 
+    fun receiveHardModeDamage(hardModeDamage: Int): Player {
+        return this.copy(
+            hitPoints = hitPoints - hardModeDamage
+        )
+    }
+
     fun applyEffects(): Player {
         val updatedMana = if(recharge > 0) {
             mana + RECHARGE_AMOUNT

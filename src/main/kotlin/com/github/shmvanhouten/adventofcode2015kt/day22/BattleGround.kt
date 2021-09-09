@@ -11,19 +11,28 @@ data class BattleGround(
 ) {
 
     fun passTurn(effect: Effect? = null): BattleGround {
+        return if(turn == Turn.PLAYER && player.hitPoints <= hardModeDamage) {
+            this.copy(player = player.receiveHardModeDamage(hardModeDamage))
+        } else {
 
+            val (updatedPlayer, updatedBoss) = applyEffects()
+            return if(turn == Turn.PLAYER) {
+                passPlayerTurn(updatedPlayer, updatedBoss, effect?: error("no effect specified for player turn"))
+            } else {
+                passBossTurn(updatedBoss, updatedPlayer)
+            }
+        }
+    }
+
+    private fun applyEffects(): Pair<Player, Boss> {
         val updatedPlayer = player.applyEffects()
         val updatedBoss = boss.applyEffects()
-
-        return if(turn == Turn.PLAYER) {
-            passPlayerTurn(updatedPlayer, updatedBoss, effect?: error("no effect specified for player turn"))
-        } else {
-            passBossTurn(updatedBoss, updatedPlayer)
-        }
+        return Pair(updatedPlayer, updatedBoss)
     }
 
     private fun passPlayerTurn(player: Player, boss: Boss, effect: Effect): BattleGround {
         var updatedPlayer = player
+            .receiveHardModeDamage(hardModeDamage)
             .drainMana(effect)
 
         var updatedBoss: Boss = boss

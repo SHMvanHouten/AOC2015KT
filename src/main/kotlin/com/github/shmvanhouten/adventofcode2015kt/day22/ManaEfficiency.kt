@@ -21,22 +21,21 @@ private fun permuteBattlesWherePlayerWon(startingBattleGround: BattleGround): Li
         val manaUsed = effectsUsed.sumBy { it.manaCost }
         when {
             manaUsed > maxManaUsed -> {
-                // do nothing
+                // drop battle
             }
             battleGround.bossWon() -> {
-                // do nothing
+                // drop battle
             }
-            battleGround.playerWon() -> {
+            battleGround.playerWon() && manaUsed <= maxManaUsed -> {
 
-                if(manaUsed <= maxManaUsed)
-                    finishedBattles.add(battleGround to effectsUsed)
-                    maxManaUsed = manaUsed
+                finishedBattles.add(battleGround to effectsUsed)
+                maxManaUsed = manaUsed
 
             }
             battleGround.turn == Turn.BOSS -> {
                 unfinishedBattles.offer(battleGround.passTurn() to effectsUsed)
             }
-            else -> {
+            battleGround.turn == Turn.PLAYER -> {
                 Effect.values()
                     .filter { battleGround.effectCanBeCast(it) }
                     .map {
