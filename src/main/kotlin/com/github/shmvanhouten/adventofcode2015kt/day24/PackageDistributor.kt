@@ -2,17 +2,17 @@ package com.github.shmvanhouten.adventofcode2015kt.day24
 
 import java.util.*
 
-fun findBestFirstPackageGroup(packages: String): Group {
+fun findBestFirstPackageGroup(packages: String, amountOfGroups: Int): Group {
     return packages.lines()
         .map { it.toInt() }
-        .let { findShortestFirstPackageGroups(it) }
+        .let { findShortestFirstPackageGroups(it, amountOfGroups) }
         .sortedBy { group -> group.map { it.toLong() }.reduce(Long::times) }
         .first() // todo first that has can fill the other groups
 }
 
-fun findShortestFirstPackageGroups(packages: Group): List<Group> {
-    if (packages.sum() % 3 != 0) error("packages can not be divided evenly")
-    val requiredGroupWeight = packages.sum() / 3
+fun findShortestFirstPackageGroups(packages: Group, amountOfGroups: Int): List<Group> {
+    if (packages.sum() % amountOfGroups != 0) error("packages can not be divided evenly")
+    val requiredGroupWeight = packages.sum() / amountOfGroups
     return listShortestGroups(packages, requiredGroupWeight)
 }
 

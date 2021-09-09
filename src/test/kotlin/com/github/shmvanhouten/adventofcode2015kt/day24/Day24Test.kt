@@ -59,7 +59,7 @@ class Day24Test {
                 11
             """.trimIndent()
 
-            val bestFirstPackageGroup = findBestFirstPackageGroup(packages)
+            val bestFirstPackageGroup = findBestFirstPackageGroup(packages, 3)
             assertThat(
                 bestFirstPackageGroup.map { it.toLong() }.reduce(Long::times),
                 equalTo(99)
@@ -69,10 +69,45 @@ class Day24Test {
         @Test
         internal fun `part 1`() {
             val packages = readFile("/input-day24.txt")
-            val bestFirstPackageGroup = findBestFirstPackageGroup(packages)
+            val bestFirstPackageGroup = findBestFirstPackageGroup(packages, 3)
             assertThat(
                 bestFirstPackageGroup.map { it.toLong() }.reduce(Long::times),
                 equalTo(10723906903)
+            )
+        }
+    }
+
+    @Nested
+    inner class Part_2 {
+        @Test
+        internal fun example() {
+            val packages = """
+                1
+                2
+                3
+                4
+                5
+                7
+                8
+                9
+                10
+                11
+            """.trimIndent()
+
+            val bestFirstPackageGroup = findBestFirstPackageGroup(packages, 4)
+            assertThat(
+                bestFirstPackageGroup.map { it.toLong() }.reduce(Long::times),
+                equalTo(44)
+            )
+        }
+
+        @Test
+        internal fun `part 2`() {
+            val packages = readFile("/input-day24.txt")
+            val bestFirstPackageGroup = findBestFirstPackageGroup(packages, 4)
+            assertThat(
+                bestFirstPackageGroup.map { it.toLong() }.reduce(Long::times),
+                equalTo(74850409)
             )
         }
     }
