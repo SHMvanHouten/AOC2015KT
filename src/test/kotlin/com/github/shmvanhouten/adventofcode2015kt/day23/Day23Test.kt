@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2015kt.day23
 
+import com.github.shmvanhouten.adventofcode2015kt.util.FileReader.readFile
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Nested
@@ -154,8 +155,31 @@ class Day23Test {
 
         @Test
         internal fun `example 1`() {
+            val example = """
+                inc a
+                jio a, +2
+                tpl a
+                inc a
+            """.trimIndent()
+            val computer = Computer(example)
+            computer.execute()
+            assertThat(computer.a, equalTo(2))
+        }
 
+        @Test
+        internal fun `part 1`() {
+            val instructions = readFile("/input-day23.txt")
+            val computer = Computer(instructions)
+            computer.execute()
+            assertThat(computer.b, equalTo(184))
         }
     }
 
+    @Test
+    internal fun `part 2`() {
+        val instructions = readFile("/input-day23.txt")
+        val computer = Computer(instructions)
+        computer.execute()
+        assertThat(computer.b, equalTo(184))
+    }
 }

@@ -54,7 +54,7 @@ fun toInstruction(raw: String): Instruction {
         InstructionType.HLF -> Instruction(type, Register.valueOf(split[1].toUpperCase()))
         InstructionType.JMP -> Instruction(type = type, amount = toJumpAmount(split[1]))
         InstructionType.JIE,
-        InstructionType.JIO -> Instruction(type, Register.valueOf(split[1].toUpperCase()), toJumpAmount(split[2]))
+        InstructionType.JIO -> Instruction(type, Register.valueOf(split[1].substring(0,1).toUpperCase()), toJumpAmount(split[2]))
     }
 }
 
