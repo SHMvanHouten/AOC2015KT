@@ -16,7 +16,8 @@ enum class InstructionType {
     INC,
     TPL,
     HLF,
-    JMP;
+    JMP,
+    JIE;
 
     fun evaluate(input: Long): Long {
         return when(this) {

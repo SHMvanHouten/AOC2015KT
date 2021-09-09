@@ -117,6 +117,28 @@ class Day23Test {
                 assertThat(computer.a, equalTo(0))
                 assertThat(computer.b, equalTo(1))
             }
+
+            @Test
+            internal fun `jie a does not jump if a is uneven`() {
+                val instructions = """inc a
+                    |jie a +2
+                    |inc b
+                """.trimMargin()
+                val computer = Computer(instructions)
+                computer.execute()
+                assertThat(computer.b, equalTo(1))
+            }
+            @Test
+            internal fun `jie a + 2 jumps 2 if a is even`() {
+                val instructions = """inc a
+                    |inc a
+                    |jie a +2
+                    |inc b
+                """.trimMargin()
+                val computer = Computer(instructions)
+                computer.execute()
+                assertThat(computer.b, equalTo(0))
+            }
         }
     }
 
