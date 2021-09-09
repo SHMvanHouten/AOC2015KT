@@ -9,6 +9,11 @@ class Computer(val instructions: List<Instruction> = emptyList()) {
     val b: Long
         get() = registers[Register.B]!!
 
+    fun withARegisterAt(i: Long): Computer {
+        registers[Register.A] = i
+        return this
+    }
+
     fun execute() {
         var pointer = 0
         while (pointer < instructions.size) {

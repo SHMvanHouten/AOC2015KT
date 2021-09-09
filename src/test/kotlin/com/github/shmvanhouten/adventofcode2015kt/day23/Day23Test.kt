@@ -178,8 +178,8 @@ class Day23Test {
     @Test
     internal fun `part 2`() {
         val instructions = readFile("/input-day23.txt")
-        val computer = Computer(instructions)
+        val computer = Computer(instructions).withARegisterAt(1)
         computer.execute()
-        assertThat(computer.b, equalTo(184))
+        assertThat(computer.b, equalTo(231))
     }
 }
