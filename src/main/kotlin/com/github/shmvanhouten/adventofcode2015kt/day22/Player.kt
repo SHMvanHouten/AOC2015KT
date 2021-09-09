@@ -15,17 +15,12 @@ data class Player(
 ) {
 
     fun receiveDamage(damage: Int): Player {
-        var updatedDamage: Int = damage
-        var updatedShield: Int = shield
-        if(shield > 0) {
-            updatedDamage -= SHIELD_AMOUNT
-            updatedShield -= 1
-        }
+        var updatedDamage: Int = damage - armor
+
         if(updatedDamage <= 0) updatedDamage = 1
 
         return this.copy(
-            hitPoints = hitPoints - updatedDamage,
-            shield = updatedShield
+            hitPoints = hitPoints - updatedDamage
         )
     }
 
@@ -44,9 +39,16 @@ data class Player(
         val updatedRecharge = if(recharge > 0) {
             recharge - 1
         } else recharge
+        var updatedArmor = 0
+        val updatedShield = if(shield > 0) {
+            updatedArmor = SHIELD_AMOUNT
+            shield - 1
+        } else shield
         return this.copy(
             mana = updatedMana,
-            recharge = updatedRecharge
+            recharge = updatedRecharge,
+            armor = updatedArmor,
+            shield = updatedShield
         )
     }
 

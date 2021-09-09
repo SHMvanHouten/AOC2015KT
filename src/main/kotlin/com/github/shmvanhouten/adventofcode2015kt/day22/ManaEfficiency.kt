@@ -8,7 +8,7 @@ fun findMostManaEfficientBattle(player: Player, boss: Boss, hardModeDamage: Int 
     return permuteBattlesWherePlayerWon(BattleGround(player, boss, hardModeDamage = hardModeDamage))
         .map { it.second }
         .map { it.sumBy { effect -> effect.manaCost } }
-        .maxOrNull()
+        .minOrNull()
 }
 
 private fun permuteBattlesWherePlayerWon(startingBattleGround: BattleGround): List<Pair<BattleGround, List<Effect>>> {

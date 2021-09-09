@@ -11,40 +11,34 @@ data class BattleGround(
 ) {
 
     fun passTurn(effect: Effect? = null): BattleGround {
-        return if(turn == Turn.PLAYER && player.hitPoints <= hardModeDamage) {
+        return if (turn == Turn.PLAYER && player.hitPoints <= hardModeDamage) {
             this.copy(player = player.receiveHardModeDamage(hardModeDamage))
         } else {
 
-            val (updatedPlayer, updatedBoss) = applyEffects()
-            return if(turn == Turn.PLAYER) {
-                passPlayerTurn(updatedPlayer, updatedBoss, effect?: error("no effect specified for player turn"))
+            return if (turn == Turn.PLAYER) {
+                passPlayerTurn(effect ?: error("no effect specified for player turn"))
             } else {
-                passBossTurn(updatedBoss, updatedPlayer)
+                passBossTurn()
             }
         }
     }
 
-    private fun applyEffects(): Pair<Player, Boss> {
-        val updatedPlayer = player.applyEffects()
-        val updatedBoss = boss.applyEffects()
-        return Pair(updatedPlayer, updatedBoss)
-    }
-
-    private fun passPlayerTurn(player: Player, boss: Boss, effect: Effect): BattleGround {
+    private fun passPlayerTurn(effect: Effect): BattleGround {
         var updatedPlayer = player
+            .applyEffects()
             .receiveHardModeDamage(hardModeDamage)
             .drainMana(effect)
 
-        var updatedBoss: Boss = boss
+        var updatedBoss: Boss = boss.applyEffects()
         when (effect) {
             Effect.POISON -> {
-                updatedBoss = boss.receivePoison()
+                updatedBoss = updatedBoss.receivePoison()
             }
             Effect.MAGIC_MISSILE -> {
-                updatedBoss = boss.receiveDamage(MAGIC_MISSILE_DAMAGE)
+                updatedBoss = updatedBoss.receiveDamage(MAGIC_MISSILE_DAMAGE)
             }
             Effect.DRAIN -> {
-                updatedBoss = boss.receiveDamage(DRAIN_DAMAGE)
+                updatedBoss = updatedBoss.receiveDamage(DRAIN_DAMAGE)
                 updatedPlayer = updatedPlayer.heal(DRAIN_DAMAGE)
             }
             Effect.RECHARGE -> {
@@ -54,7 +48,6 @@ data class BattleGround(
                 updatedPlayer = updatedPlayer.shield()
             }
         }
-        // todo other effects
         return this.copy(
             player = updatedPlayer,
             boss = updatedBoss,
@@ -62,13 +55,10 @@ data class BattleGround(
         )
     }
 
-    private fun passBossTurn(
-        boss: Boss,
-        player: Player
-    ): BattleGround {
+    private fun passBossTurn(): BattleGround {
         return this.copy(
-            player = player.receiveDamage(boss.damage),
-            boss = boss.receiveDamage(0),
+            player = player.applyEffects().receiveDamage(boss.damage),
+            boss = boss.applyEffects(),
             turn = turn.next()
         )
     }
@@ -93,6 +83,12 @@ data class BattleGround(
             Effect.RECHARGE -> player.recharge <= 1
         }
     }
+
+    override fun toString(): String {
+        return "BattleGround(player=$player, boss=$boss, turn=$turn)"
+    }
+
+
 }
 
 enum class Turn {

@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2015kt.day22
 
+import com.github.shmvanhouten.adventofcode2015kt.day22.Effect.*
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Nested
@@ -15,19 +16,19 @@ class Day22Test {
         @Test
         internal fun `poison deals damage each turn for 6 turns`() {
             var battleGround = BattleGround(Player(hitPoints = 1000), Boss(1, 100))
-            battleGround = battleGround.passTurn(Effect.POISON)
+            battleGround = battleGround.passTurn(POISON)
             assertThat(battleGround.boss.hitPoints, equalTo(100))
 
             battleGround = battleGround.passTurn()
             assertThat(battleGround.boss.hitPoints, equalTo(97))
 
-            battleGround = battleGround.passTurn(Effect.SHIELD)
+            battleGround = battleGround.passTurn(SHIELD)
             assertThat(battleGround.boss.hitPoints, equalTo(94))
 
             battleGround = battleGround.passTurn()
-            battleGround = battleGround.passTurn(Effect.SHIELD)
+            battleGround = battleGround.passTurn(SHIELD)
             battleGround = battleGround.passTurn()
-            battleGround = battleGround.passTurn(Effect.SHIELD)
+            battleGround = battleGround.passTurn(SHIELD)
             assertThat(battleGround.boss.hitPoints, equalTo(82))
 
             battleGround = battleGround.passTurn()
@@ -53,7 +54,7 @@ class Day22Test {
         @Test
         internal fun `recharge increases mana by 101 over 5 turns`() {
             var battleGround = BattleGround(Player(mana = 1000), Boss(0, 100))
-            battleGround = battleGround.passTurn(Effect.RECHARGE)
+            battleGround = battleGround.passTurn(RECHARGE)
             assertThat(battleGround.player.mana, equalTo(1000 - 229))
 
             battleGround = battleGround.passTurn()
@@ -90,7 +91,7 @@ class Day22Test {
         internal fun `shield increases armor by 7 for 6 turns, reducing damage taken by the boss by 7`() {
             var battleGround = BattleGround(Player(hitPoints = 1000), Boss(10, 100))
 
-            battleGround = battleGround.passTurn(Effect.SHIELD)
+            battleGround = battleGround.passTurn(SHIELD)
             assertThat(battleGround.player.hitPoints, equalTo(1000))
 
             battleGround = battleGround.passTurn()
@@ -130,6 +131,21 @@ class Day22Test {
 
     @Nested
     inner class Part_2 {
+
+        @Test
+        internal fun `run simulation`() {
+            val effectsToUse = listOf(POISON, RECHARGE, SHIELD, POISON, RECHARGE, MAGIC_MISSILE, POISON, MAGIC_MISSILE, MAGIC_MISSILE)
+//            val effectsToUse = listOf(POISON, RECHARGE, MAGIC_MISSILE, POISON, RECHARGE, SHIELD, POISON, DRAIN, MAGIC_MISSILE)
+            simulateBattleWithEffects(
+                BattleGround(
+                    player = Player(),
+                    boss = Boss(9, 58),
+                    hardModeDamage = 0
+                ),
+                effectsToUse
+            )
+        }
+
         @Test
         internal fun `part 2`() {
             val hitPoints = 58
