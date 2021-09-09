@@ -72,7 +72,7 @@ class Day24Test {
             val bestFirstPackageGroup = findBestFirstPackageGroup(packages)
             assertThat(
                 bestFirstPackageGroup.map { it.toLong() }.reduce(Long::times),
-                equalTo(99)
+                equalTo(10723906903)
             )
         }
     }

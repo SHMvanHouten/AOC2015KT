@@ -1,5 +1,7 @@
 package com.github.shmvanhouten.adventofcode2015kt.day24
 
+import java.util.*
+
 fun findBestFirstPackageGroup(packages: String): Group {
     return packages.lines()
         .map { it.toInt() }
@@ -10,28 +12,36 @@ fun findBestFirstPackageGroup(packages: String): Group {
 
 fun findShortestFirstPackageGroups(packages: Group): List<Group> {
     if (packages.sum() % 3 != 0) error("packages can not be divided evenly")
-    val groupSize = packages.sum() / 3
-    val groups = packages
-        .permuteGroupsOfWeight(groupSize)
-    return groups.filter { it.size == groups.minOf { it.size } }
+    val requiredGroupWeight = packages.sum() / 3
+    return listShortestGroups(packages, requiredGroupWeight)
 }
 
-
-fun packageDistributions(packages: String): List<Distribution> {
-    return packages.lines()
-        .map { it.toInt() }
-        .let { permuteDistributionsTo3Groups(it) }
-}
-
-fun permuteDistributionsTo3Groups(packages: List<Int>): List<Distribution> {
-    if (packages.sum() % 3 != 0) error("packages can not be divided evenly")
-    val groupSize = packages.sum() / 3
-    return packages
-        .permuteGroupsOfWeight(groupSize)
-        .map { it.sorted() }
-        .distinct()
-        .permute()
-        .map { toDistribution(it) }
+private fun listShortestGroups(packages: List<Int>, groupWeight: Int): List<Group> {
+    val potentialGroups: Queue<Pair<Group, List<Int>>> = LinkedList(packages
+        .mapIndexed { index, pakje ->
+            listOf(pakje) to packages.subList(index + 1, packages.size)
+        }.toMutableList()
+    )
+    val groups = mutableListOf<Group>()
+    var minGroupSize = Int.MAX_VALUE
+    while (potentialGroups.isNotEmpty()) {
+        val (groupSoFar, remainingPackages) = potentialGroups.poll()!!
+        if (groupSoFar.size <= minGroupSize && groupSoFar.sum() == groupWeight) {
+            if (groupSoFar.size < minGroupSize) {
+                groups.clear()
+                minGroupSize = groupSoFar.size
+            }
+            groups.add(groupSoFar)
+        } else if (groupSoFar.size >= minGroupSize) {
+            // drop it
+        } else {
+            potentialGroups.addAll(remainingPackages
+                .mapIndexed { index, pakje ->
+                    groupSoFar + pakje to remainingPackages.subList(index + 1, remainingPackages.size)
+                })
+        }
+    }
+    return groups
 }
 
 private fun List<Int>.permuteGroupsOfWeight(groupSize: Int, groupSoFar: List<Int> = emptyList()): List<List<Int>> {
@@ -45,6 +55,23 @@ private fun List<Int>.permuteGroupsOfWeight(groupSize: Int, groupSoFar: List<Int
             rest.permuteGroupsOfWeight(groupSize, groupSoFar + element)
         }.flatten()
     }
+}
+
+fun permuteDistributionsTo3Groups(packages: List<Int>): List<Distribution> {
+    if (packages.sum() % 3 != 0) error("packages can not be divided evenly")
+    val groupSize = packages.sum() / 3
+    return packages
+        .permuteGroupsOfWeight(groupSize)
+        .map { it.sorted() }
+        .distinct()
+        .permute()
+        .map { toDistribution(it) }
+}
+
+fun packageDistributions(packages: String): List<Distribution> {
+    return packages.lines()
+        .map { it.toInt() }
+        .let { permuteDistributionsTo3Groups(it) }
 }
 
 private fun List<Group>.permute(groupsCombinationsSoFar: List<Group> = emptyList()): List<List<Group>> {
