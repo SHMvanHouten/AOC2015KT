@@ -1,7 +1,6 @@
 package com.github.shmvanhouten.adventofcode2015kt.day18
 
 import com.github.shmvanhouten.adventofcode2015kt.util.Coordinate
-import java.awt.Dimension
 
 data class Field(val lights: Map<Coordinate, Light>, val dimensions: Dimension) {
 
@@ -40,3 +39,5 @@ data class Field(val lights: Map<Coordinate, Light>, val dimensions: Dimension) 
     }
 
 }
+
+data class Dimension(val width: Int, val height: Int)

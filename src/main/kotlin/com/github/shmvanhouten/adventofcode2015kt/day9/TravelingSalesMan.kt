@@ -1,72 +1,84 @@
 package com.github.shmvanhouten.adventofcode2015kt.day9
 
 import com.github.shmvanhouten.adventofcode2015kt.util.getAllRoutes
-import java.lang.RuntimeException
 
-fun findShortestDistance(vararg pairDistances: PairDistance): Int? {
-    return findShortestDistance(pairDistances.toList())
-}
-
-fun findShortestDistance(pairDistances: List<PairDistance>): Int? {
-    return listAllRouteDistances(pairDistances).min()
-}
-
-fun findLongestDistance(pairDistances: List<PairDistance>): Int? {
-    return listAllRouteDistances(pairDistances).max()
-}
-
-private fun listAllRouteDistances(pairDistances: List<PairDistance>): List<Int> {
-    val nodes = getDistinctNodes(pairDistances)
-    val routes = getAllRoutes(nodes)
-    val distanceMap = mapDistances(nodes, pairDistances)
-    return routes.map { getTotalDistance(it, distanceMap) }
-}
-
-fun getTotalDistance(route: List<String>, distanceMap: Map<String, Map<String, Int>>): Int {
-    return route
-        .dropLast(1)
-        .mapIndexed { i, node -> distanceMap[node]!![route[i + 1]]!! }
-        .sum()
-}
-
-fun mapDistances(nodes: List<String>, pairDistances: List<PairDistance>): Map<String, Map<String, Int>> {
-    return nodes.map { origin ->
-        origin to mapDistancesFromCurrentNodeToNodes(origin, nodes.minus(origin), pairDistances)
-    }.toMap()
-}
-
-private fun mapDistancesFromCurrentNodeToNodes(
-    origin: String,
-    otherNodes: List<String>,
-    pairDistances: List<PairDistance>
-): Map<String, Int> {
-    return otherNodes.map { destination ->
-        destination to getDistance(origin, destination, pairDistances)
-    }.toMap()
-}
-
-fun getDistance(origin: String, destination: String, pairDistances: List<PairDistance>): Int {
-    return pairDistances.find {
-        (it.destination == destination && it.origin == origin)
-                || (it.destination == origin && it.origin == destination)
-    }?.distance ?: throw RuntimeException("No distance found for $origin and $destination")
-}
-
-fun getDistinctNodes(pairDistances: List<PairDistance>): List<String> {
-    return pairDistances.map { it.origin }
-        .plus(pairDistances.map { it.destination })
-        .distinct()
-}
-
-
-fun parseInput(input: String): List<PairDistance> {
+fun parseInput(input: String): List<Edge> {
     return input.split('\n')
         .map { toPair(it) }
 }
 
-private fun toPair(raw: String): PairDistance {
-    val split = raw.split(' ')
-    return PairDistance(split[0], split[2], split[4].toInt())
+fun findShortestDistance(vararg edges: Edge): Int? {
+    return findShortestDistance(edges.toList())
 }
 
-data class PairDistance(val origin: String, val destination: String, val distance: Int)
+fun findShortestDistance(edges: List<Edge>): Int? {
+    return listDistancesForAllRoutes(edges).minOrNull()
+}
+
+fun findLongestDistance(edges: List<Edge>): Int? {
+    return listDistancesForAllRoutes(edges).maxOrNull()
+}
+
+private fun listDistancesForAllRoutes(edges: List<Edge>): List<Int> {
+    val nodes = listDistinctNodes(edges)
+    val distanceMap = mapDistances(nodes, edges)
+    return getAllRoutes(nodes)
+        .map { route -> calculateTotalDistance(route, distanceMap) }
+}
+
+private fun calculateTotalDistance(route: List<Node>, distanceMap: Map<Node, Map<Node, Distance>>): Distance {
+    return route
+        .windowed(2)
+        .sumOf { (origin, destination) -> distanceMap.distanceFrom(origin).toDestination(destination) }
+}
+
+private fun mapDistances(nodes: List<String>, edges: List<Edge>): Map<Node, Map<Node, Distance>> {
+    return nodes.associateWith { origin ->
+        listDistancesFromCurrentNodeToDestinations(origin, nodes.minus(origin), edges)
+    }
+}
+
+private fun listDistancesFromCurrentNodeToDestinations(
+    origin: Node,
+    destinations: List<Node>,
+    edges: List<Edge>
+): Map<Node, Distance> {
+    return destinations.associateWith { destination ->
+        edges.findDistance(origin, destination)
+    }
+}
+
+private fun List<Edge>.findDistance(origin: Node, destination: Node): Distance {
+    return this.first {
+        it.connects(origin, destination)
+    }.distance
+}
+
+private fun listDistinctNodes(edges: List<Edge>): List<String> {
+    return edges.map { it.origin }
+        .plus(edges.map { it.destination })
+        .distinct()
+}
+
+private fun toPair(raw: String): Edge {
+    val split = raw.split(' ')
+    return Edge(split[0], split[2], split[4].toInt())
+}
+
+private fun Map<Node, Map<Node, Distance>>.distanceFrom(origin: Node): Map<Node, Distance> {
+    return this[origin]!!
+}
+
+private fun Map<Node, Distance>.toDestination(destination: Node): Distance {
+    return this[destination]!!
+}
+
+data class Edge(val origin: Node, val destination: Node, val distance: Distance) {
+    fun connects(node1: Node, node2: Node): Boolean {
+        return (node1 == destination && node2 == origin)
+                || (node1 == origin && node2 == destination)
+    }
+}
+
+typealias Node = String
+typealias Distance = Int

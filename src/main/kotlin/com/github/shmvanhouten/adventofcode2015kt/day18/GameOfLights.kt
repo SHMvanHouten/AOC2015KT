@@ -1,21 +1,13 @@
 package com.github.shmvanhouten.adventofcode2015kt.day18
 
 import com.github.shmvanhouten.adventofcode2015kt.util.Coordinate
-import com.github.shmvanhouten.adventofcode2015kt.util.FileReader.readFile
-import java.awt.Dimension
 
-
-fun getFile(path: String): String {
-    return readFile(path)
-}
 
 fun parseInput(input: String): Field {
     val rawLines = input.split('\n')
     val fieldMap = rawLines
         .mapIndexed { y, line -> toLineOfLights(line, y) }
-        .flatten()
-        .map { it.coordinate to it }
-        .toMap()
+        .flatten().associateBy { it.coordinate }
     return Field(fieldMap, Dimension(rawLines.first().length, rawLines.size))
 }
 

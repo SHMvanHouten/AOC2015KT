@@ -8,7 +8,7 @@ class TravelingSalesmanTest {
 
     @Test
     internal fun `the shortest distance for a route of 2 points is that 20`() {
-        val amsterdamToHaarlem = PairDistance("Amsterdam", "Haarlem", 20)
+        val amsterdamToHaarlem = Edge("Amsterdam", "Haarlem", 20)
 
         val shortestDistance = findShortestDistance(amsterdamToHaarlem)
 
@@ -17,7 +17,7 @@ class TravelingSalesmanTest {
 
     @Test
     internal fun `the shortest distance for a route of 2 points is that 30`() {
-        val amstelveenToHaarlem = PairDistance("Amstelveen", "Haarlem", 30)
+        val amstelveenToHaarlem = Edge("Amstelveen", "Haarlem", 30)
 
         val shortestDistance = findShortestDistance(amstelveenToHaarlem)
 
@@ -26,9 +26,9 @@ class TravelingSalesmanTest {
 
     @Test
     internal fun `the shortest distance between three points is 30`() {
-        val amsterdamToHaarlem = PairDistance("Amsterdam", "Haarlem", 20)
-        val amsterdamToAmstelveen = PairDistance("Amsterdam", "Amstelveen", 10)
-        val haarlemToAmstelveen = PairDistance("Haarlem", "Amstelveen", 30)
+        val amsterdamToHaarlem = Edge("Amsterdam", "Haarlem", 20)
+        val amsterdamToAmstelveen = Edge("Amsterdam", "Amstelveen", 10)
+        val haarlemToAmstelveen = Edge("Haarlem", "Amstelveen", 30)
 
         val shortestDistance = findShortestDistance(amsterdamToHaarlem, amsterdamToAmstelveen, haarlemToAmstelveen)
 
@@ -38,9 +38,9 @@ class TravelingSalesmanTest {
 
     @Test
     internal fun `the shortest distance between these three points is 605`() {
-        val londonToDublin = PairDistance("London", "Dublin", 464)
-        val londonToBelfast = PairDistance("London", "Belfast", 518)
-        val dublinToBelfast = PairDistance("Dublin", "Belfast", 141)
+        val londonToDublin = Edge("London", "Dublin", 464)
+        val londonToBelfast = Edge("London", "Belfast", 518)
+        val dublinToBelfast = Edge("Dublin", "Belfast", 141)
 
         val shortestDistance = findShortestDistance(londonToDublin, londonToBelfast, dublinToBelfast)
 
@@ -58,12 +58,12 @@ class TravelingSalesmanTest {
             |  /         \    |
         Utrecht --   19 -- Woerden
          */
-        val amsterdamToHaarlem = PairDistance("Amsterdam", "Haarlem", 21)
-        val amsterdamToWoerden = PairDistance("Amsterdam", "Woerden", 80)
-        val amsterdamToUtrecht = PairDistance("Amsterdam", "Utrecht", 50)
-        val haarlemToUtrecht = PairDistance("Haarlem", "Utrecht", 80)
-        val haarlemToWoerden = PairDistance("Haarlem", "Woerden", 40)
-        val UtrechtToWoerden = PairDistance("Utrecht", "Woerden", 19)
+        val amsterdamToHaarlem = Edge("Amsterdam", "Haarlem", 21)
+        val amsterdamToWoerden = Edge("Amsterdam", "Woerden", 80)
+        val amsterdamToUtrecht = Edge("Amsterdam", "Utrecht", 50)
+        val haarlemToUtrecht = Edge("Haarlem", "Utrecht", 80)
+        val haarlemToWoerden = Edge("Haarlem", "Woerden", 40)
+        val UtrechtToWoerden = Edge("Utrecht", "Woerden", 19)
 
         val shortestDistance = findShortestDistance(
             amsterdamToHaarlem,
@@ -79,11 +79,11 @@ class TravelingSalesmanTest {
 
     @Test
     internal fun `parse input`() {
-        val pairDistances: List<PairDistance> = parseInput(testinput)
+        val pairDistances: List<Edge> = parseInput(testinput)
         assertThat(pairDistances.size, equalTo(3))
-        assertThat(pairDistances[0], equalTo(PairDistance("London", "Dublin", 464)))
-        assertThat(pairDistances[1], equalTo(PairDistance("London", "Belfast", 518)))
-        assertThat(pairDistances[2], equalTo(PairDistance("Dublin", "Belfast", 141)))
+        assertThat(pairDistances[0], equalTo(Edge("London", "Dublin", 464)))
+        assertThat(pairDistances[1], equalTo(Edge("London", "Belfast", 518)))
+        assertThat(pairDistances[2], equalTo(Edge("Dublin", "Belfast", 141)))
     }
 
     @Test

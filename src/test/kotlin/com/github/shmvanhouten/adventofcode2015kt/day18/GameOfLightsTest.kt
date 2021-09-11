@@ -1,5 +1,6 @@
 package com.github.shmvanhouten.adventofcode2015kt.day18
 
+import com.github.shmvanhouten.adventofcode2015kt.util.FileReader.readFile
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import org.junit.jupiter.api.Test
@@ -130,7 +131,7 @@ class GameOfLightsTest {
 
     @Test
     internal fun part1() {
-        val field = parseInput(getFile("/input-day18.txt"))
+        val field = parseInput(readFile("/input-day18.txt"))
 
         // WHEN
         val result = tick(field, 100)
@@ -142,7 +143,7 @@ class GameOfLightsTest {
 
     @Test
     internal fun `part 2`() {
-        val field = parseInput(getFile("/input-day18.txt"))
+        val field = parseInput(readFile("/input-day18.txt"))
 
         // WHEN
         val result = tickWithLightsStuck(field, 100)
