@@ -33,20 +33,19 @@ fun matchesSueCompounds2(sue: Sue): Boolean {
         .all { sameCompounds(it) }
 }
 
-private fun sameCompounds(it: Map.Entry<String, Int>): Boolean {
+private fun sameCompounds(compound: Compound): Boolean {
 
-    val compound = it.key
-    val amount = SUE_COMPOUNDS[compound]?: error("unknown compound: $compound")
-    return when(compound) {
-        "cats", "trees" -> it.value > amount
-        "pomeranians", "goldfish" -> it.value < amount
-        else -> amount == it.value
+    val amount = SUE_COMPOUNDS[compound.name] ?: error("unknown compound: ${compound.name}")
+    return when (compound.name) {
+        "cats", "trees" -> compound.amount > amount
+        "pomeranians", "goldfish" -> compound.amount < amount
+        else -> amount == compound.amount
     }
 }
 
 fun matchesSueCompounds(sue: Sue): Boolean {
     return sue.compounds
-        .all { SUE_COMPOUNDS[it.key] == it.value }
+        .all { SUE_COMPOUNDS[it.name] == it.amount }
 }
 
 fun parseSues(): List<Sue> {
@@ -58,9 +57,10 @@ fun toSue(rawSue: String): Sue {
     val rawCompounds = rawSue.substring(rawSue.indexOf(':') + 2).split(", ")
     val compounds = rawCompounds
         .map { it.splitIntoTwo(": ") }
-        .map { it.first to it.second.toInt() }
-        .toMap()
+        .map { Compound(it.first, it.second.toInt()) }
     return Sue(name, compounds)
 }
 
-data class Sue(val name: String, val compounds: Map<String, Int>)
+data class Sue(val name: String, val compounds: List<Compound>)
+
+data class Compound(val name: String, val amount: Int)
