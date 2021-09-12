@@ -1,9 +1,11 @@
 package com.github.shmvanhouten.adventofcode2015kt.day17
 
+import com.github.shmvanhouten.adventofcode2015kt.util.allWithMinOf
+
 private const val GOAL = 150
 
 fun main() {
-    val containers = listOf(
+    val containers = setOf(
         Container(1, 50),
         Container(2, 44),
         Container(3, 11),
@@ -26,28 +28,22 @@ fun main() {
         Container(20, 40)
     )
 
-    val allContainerCombos = getAllContainerCombos(containers)
+    val allContainerCombos = findContainerCombos(containers)
     println(allContainerCombos.size)
     // 654
 
-    val minsize = allContainerCombos
-        .map { it.size }
-        .min()?: error("tried to min an empty list, stupid")
-
-    println(allContainerCombos.filter { it.size == minsize }.size)
+    println(allContainerCombos.allWithMinOf { it.size }.size)
     // 57
 }
 
-fun getAllContainerCombos(nodes: List<Container>) = findContainerCombos(nodes, emptySet(), emptyList(), 0)
-
 fun findContainerCombos(
-    nodes: List<Container>,
-    routes: Set<List<Container>>,
-    currentContainerCombo: List<Container>,
-    sum: Int
-): Set<List<Container>> {
+    nodes: Set<Container>,
+    routes: Set<Set<Container>> = emptySet(),
+    currentContainerCombo: Set<Container> = emptySet(),
+    sum: Int = 0
+): Set<Set<Container>> {
     return when {
-        sum == GOAL -> routes.plus(setOf(currentContainerCombo.sortedBy { it.id }))
+        sum == GOAL -> routes.plusElement(currentContainerCombo)
         sum > GOAL -> routes
         else -> nodes.flatMap { container ->
             findContainerCombos(
