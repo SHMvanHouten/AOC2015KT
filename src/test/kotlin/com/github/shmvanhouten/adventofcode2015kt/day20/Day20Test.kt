@@ -30,7 +30,6 @@ class Day20Test {
     @Test
     internal fun `first house to 36000000 is 831600`() {
         assertThat(firstHouseTo(36000000L), equalTo(831600L))
-        // pt1 831600
     }
 
     @Test
