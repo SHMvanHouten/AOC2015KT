@@ -1,6 +1,5 @@
 package com.github.shmvanhouten.adventofcode2015kt.day12
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 
 fun main() {
@@ -11,14 +10,14 @@ fun main() {
     // 191164
 
     val mapper = ObjectMapper()
-    val jsonList = mapper.readValue(json, JsonList())
-    val numbers = jsonList.flatMap { getTheInts(it) }
+    val jsonList = mapper.readValue(json, List::class.java)
+    val numbers = jsonList.filterNotNull().flatMap { getTheInts(it) }
     println(numbers.sum())
     // 87842
 }
 
-fun getTheInts(jsonElement: Any): List<Int> {
-    return when(jsonElement) {
+private fun getTheInts(jsonElement: Any): List<Int> {
+    return when (jsonElement) {
         is ArrayList<*> -> jsonElement.flatMap { getTheInts(it) }
         is LinkedHashMap<*, *> -> handleMap(jsonElement)
         is String -> emptyList()
@@ -29,29 +28,20 @@ fun getTheInts(jsonElement: Any): List<Int> {
 
 private fun handleMap(jsonElement: LinkedHashMap<*, *>): List<Int> {
     val values = jsonElement.values
-    if (values.any { isRed(it) }) {
-        return emptyList()
+    return if (values.any { isRed(it) }) {
+        emptyList()
     } else {
-        return values.flatMap { getTheInts(it) }
+        values.flatMap { getTheInts(it) }
     }
 }
 
-fun isRed(element: Any): Boolean {
-    return if(element is String) {
-        element == "red"
-    } else {
-        false
-    }
+private fun isRed(element: Any): Boolean {
+    return element is String && element == "red"
 }
-
-class JsonList : TypeReference<List<Any>>()
 
 private fun addAllNumbersInsideJson(json: String): Int {
-    val allNumbers = Regex("[0-9]+")
+    return Regex("-?[0-9]+")
         .findAll(json)
         .map { it.value.toInt() }
-    val allNegativeNumbers = Regex("-[0-9]+")
-        .findAll(json)
-        .map { it.value.toInt() }
-    return allNumbers.sum() + allNegativeNumbers.map { it * 2 }.sum()
+        .sum()
 }
