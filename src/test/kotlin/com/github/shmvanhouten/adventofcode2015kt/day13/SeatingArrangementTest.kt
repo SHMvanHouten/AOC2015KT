@@ -28,10 +28,8 @@ class SeatingArrangementTest {
 
         @Test
         internal fun `calculate total happiness for the test input`() {
-            println(findOptimalHappiness(parseGuests(input)))
-            // 709
-            println(findOptimalHappiness(parseGuests(input2)))
-            // 668
+            assertThat(findOptimalHappiness(parseGuests(input)), equalTo(709))
+            assertThat(findOptimalHappiness(parseGuests(input2)), equalTo(668))
         }
 
         private fun givenFeelingsTowardEachOtherTotalHappinessIs(
