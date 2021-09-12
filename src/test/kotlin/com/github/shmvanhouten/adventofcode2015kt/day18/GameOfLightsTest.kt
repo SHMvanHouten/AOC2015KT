@@ -14,7 +14,7 @@ class GameOfLightsTest {
         val field = parseInput(input)
 
         // WHEN
-        val result = tick(field)
+        val result = field.tick()
 
         // THEN
         val expected = """..
@@ -30,7 +30,7 @@ class GameOfLightsTest {
         val field = parseInput(input)
 
         // WHEN
-        val result = tick(field)
+        val result = field.tick()
 
         // THEN
         val expected = """..
@@ -46,7 +46,7 @@ class GameOfLightsTest {
         val field = parseInput(input)
 
         // WHEN
-        val result = tick(field)
+        val result = field.tick()
 
         // THEN
         val expected = """##
@@ -62,7 +62,7 @@ class GameOfLightsTest {
         val field = parseInput(input)
 
         // WHEN
-        val result = tick(field)
+        val result = field.tick()
 
         // THEN
         val expected = """..
@@ -78,7 +78,7 @@ class GameOfLightsTest {
         val field = parseInput(input)
 
         // WHEN
-        val result = tick(field)
+        val result = field.tick()
 
         // THEN
         val expected = """##
@@ -95,7 +95,7 @@ class GameOfLightsTest {
         val field = parseInput(input)
 
         // WHEN
-        val result = tick(field)
+        val result = field.tick()
 
         // THEN
         val expected = """#..
@@ -137,8 +137,10 @@ class GameOfLightsTest {
         val result = tick(field, 100)
 
         // THEN
-        println(result.countLights())
-        // 814
+        assertThat(
+            result.countLights(),
+            equalTo(814)
+        )
     }
 
     @Test
@@ -149,6 +151,9 @@ class GameOfLightsTest {
         val result = tickWithLightsStuck(field, 100)
 
         // THEN
-        println(result.countLights())
+        assertThat(
+            result.countLights(),
+            equalTo(924)
+        )
     }
 }

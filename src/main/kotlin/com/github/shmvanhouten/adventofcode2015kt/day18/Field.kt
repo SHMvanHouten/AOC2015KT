@@ -38,6 +38,28 @@ data class Field(val lights: Map<Coordinate, Light>, val dimensions: Dimension) 
         return Field(mutableLights, dimensions)
     }
 
+    fun tick(): Field = this.copy(lights = tickLights())
+
+    private fun tickLights() =
+        this.lights.values.map { tick(it) }
+            .associateBy { it.coordinate }
+
+    private fun tick(light: Light): Light {
+        return Light(shouldBeOn(light), light.coordinate)
+    }
+
+    private fun shouldBeOn(light: Light): Boolean {
+        val adjacentLights = countAdjacentLightsThatAreOn(light)
+        return light.isOn && (adjacentLights == 2 || adjacentLights == 3)
+                || !light.isOn && adjacentLights == 3
+    }
+
+    private fun countAdjacentLightsThatAreOn(
+        light: Light,
+    ) = light.coordinate.getNeighbours()
+        .mapNotNull { lights[it] }
+        .count { it.isOn }
+
 }
 
 data class Dimension(val width: Int, val height: Int)
