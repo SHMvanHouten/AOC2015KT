@@ -7,13 +7,13 @@ data class Ingredient(
     val texture: Long,
     val calories: Long
 ) {
-    operator fun times(multiplicator: Int): Ingredient {
+    operator fun times(multiplicand: Int): Ingredient {
         return Ingredient(
-            capacity * multiplicator,
-            durability * multiplicator,
-            flavor * multiplicator,
-            texture * multiplicator,
-            calories * multiplicator
+            capacity * multiplicand,
+            durability * multiplicand,
+            flavor * multiplicand,
+            texture * multiplicand,
+            calories * multiplicand
         )
     }
 }

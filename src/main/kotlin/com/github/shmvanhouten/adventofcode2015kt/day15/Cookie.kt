@@ -6,4 +6,9 @@ data class Cookie(
     val totalFlavor: Long,
     val totalTexture: Long,
     val totalCalories: Long
-)
+) {
+    val score = totalCapacity *
+            totalDurability *
+            totalFlavor *
+            totalTexture
+}

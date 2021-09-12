@@ -1,22 +1,14 @@
 package com.github.shmvanhouten.adventofcode2015kt.day15
 
 
-fun getBest500CaloryCookieScore(vararg ingredients: Ingredient): Long {
-    return getBest500CaloryCookieScore(ingredients.asList())
+fun getBest500CalorieCookieScore(vararg ingredients: Ingredient): Long {
+    return getBest500CalorieCookieScore(ingredients.asList())
 }
 
-private fun getBest500CaloryCookieScore(ingredients: List<Ingredient>): Long {
-    val mixAmounts = getAllPossibleIngredientAmountVariations(ingredients.size)
-    return mixAmounts
-        .map { it to toCookie(assignAmounts(it, ingredients)) }
-        .filter { hasNoNegativeProperties(it.second) }
-        .filter { has500Calories(it.second) }
-        .map { calculateScore(it.second) }
-        .max() ?: error("empty list!")
-}
-
-fun has500Calories(cookie: Cookie): Boolean {
-    return cookie.totalCalories == 500L
+private fun getBest500CalorieCookieScore(ingredients: List<Ingredient>): Long {
+    return getAllPositiveCookies(ingredients)
+        .filter { it.totalCalories == 500L }
+        .maxOf { it.score }
 }
 
 fun getBestCookieScore(vararg ingredient: Ingredient): Long {
@@ -25,26 +17,19 @@ fun getBestCookieScore(vararg ingredient: Ingredient): Long {
 
 fun getBestCookieScore(ingredients: List<Ingredient>): Long {
 
-//    val allMixes: List<List<Ingredient>> = getAllPossibleIngredientMixes(ingredients)
-//    return findBestCookieMix(allMixes)
-    val mixAmounts = getAllPossibleIngredientAmountVariations(ingredients.size)
-    return mixAmounts
-        .map { it to toCookie(assignAmounts(it, ingredients)) }
-        .filter { hasNoNegativeProperties(it.second) }
-        .map { calculateScore(it.second) }
-        .max() ?: error("empty list!")
+    return getAllPositiveCookies(ingredients)
+        .maxOf { it.score }
 }
+
+private fun getAllPositiveCookies(ingredients: List<Ingredient>) =
+    getAllPossibleIngredientAmountVariations(ingredients.size)
+        .asSequence()
+        .map { toCookie(assignAmounts(it, ingredients)) }
+        .filter { hasNoNegativeProperties(it) }
 
 fun assignAmounts(amounts: List<Int>, ingredients: List<Ingredient>): List<Ingredient> {
     return amounts.zip(ingredients)
         .map { (amount, ingredient) -> ingredient * amount }
-}
-
-fun calculateScore(cookie: Cookie): Long {
-    return cookie.totalCapacity *
-            cookie.totalDurability *
-            cookie.totalFlavor *
-            cookie.totalTexture
 }
 
 fun hasNoNegativeProperties(cookie: Cookie): Boolean {
@@ -56,71 +41,31 @@ fun hasNoNegativeProperties(cookie: Cookie): Boolean {
 
 fun toCookie(ingredients: List<Ingredient>): Cookie {
     return Cookie(
-        ingredients.map { it.capacity }.sum(),
-        ingredients.map { it.durability }.sum(),
-        ingredients.map { it.flavor }.sum(),
-        ingredients.map { it.texture }.sum(),
-        ingredients.map { it.calories }.sum()
-    )
-}
-
-fun getAllPossibleIngredientAmountVariations(amountOfIngredients: Int): List<List<Int>> {
-    return getAllPossibleIngredientAmountVariations(
-        amountOfIngredients,
-        100,
-        emptyList(),
-        emptyList()
+        ingredients.sumOf { it.capacity },
+        ingredients.sumOf { it.durability },
+        ingredients.sumOf { it.flavor },
+        ingredients.sumOf { it.texture },
+        ingredients.sumOf { it.calories }
     )
 }
 
 fun getAllPossibleIngredientAmountVariations(
     amountOfIngredients: Int,
-    teaspoonsLeft: Int,
-    currentMix: List<Int>,
-    mixes: List<List<Int>>
+    teaspoonsLeft: Int = 100,
+    currentMix: List<Int> = emptyList(),
+    mixes: List<List<Int>> = emptyList()
 ): List<List<Int>> {
-    if (amountOfIngredients == 1) {
+    return if (amountOfIngredients == 1) {
         val finishedMix = currentMix.plus(listOf(teaspoonsLeft))
-        return mixes.plus(listOf(finishedMix))
+        mixes.plus(listOf(finishedMix))
     } else {
-        return (0..teaspoonsLeft).flatMap { teaspoons ->
+        (0..teaspoonsLeft).flatMap { teaspoons ->
             getAllPossibleIngredientAmountVariations(
                 amountOfIngredients - 1,
                 teaspoonsLeft - teaspoons,
                 currentMix.plus(listOf(teaspoons)),
                 mixes
             )
-        }
-    }
-}
-
-private fun findBestCookieMix(allMixes: List<List<Ingredient>>): Long {
-    return allMixes
-        .map { toCookie(it) }
-        .filter { hasNoNegativeProperties(it) }
-        .sortedByDescending { calculateScore(it) }
-        .map { calculateScore(it) }
-        .max() ?: error("empty list!")
-}
-
-fun getAllPossibleIngredientMixes(ingredients: List<Ingredient>): List<List<Ingredient>> {
-    return getAllPossibleIngredientMixes(ingredients, 100, emptyList(), emptyList())
-}
-
-fun getAllPossibleIngredientMixes(
-    ingredients: List<Ingredient>,
-    teaspoonsLeft: Int,
-    currentMix: List<Ingredient>,
-    mixes: List<List<Ingredient>>
-): List<List<Ingredient>> {
-    val ingredient = ingredients.first()
-    val rest = ingredients.minus(ingredient)
-    if (rest.isEmpty()) {
-        val finishedMix = currentMix.plus(listOf(ingredient * teaspoonsLeft))
-        return mixes.plus(listOf((finishedMix)))
-    } else {
-        return (0..teaspoonsLeft).flatMap { teaspoons ->
-            getAllPossibleIngredientMixes(rest, (teaspoonsLeft - teaspoons), currentMix.plus(ingredient * teaspoons), mixes)
         }
     }
 }

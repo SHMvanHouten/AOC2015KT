@@ -16,10 +16,10 @@ class CookieScoreTest {
 
     @Test
     internal fun `a single ingredient leads to a cookie score of each property (except calories) * 100, multiplied`() {
-        val butterscotch = Ingredient(1,2,3,4,5)
+        val butterscotch = Ingredient(1, 2, 3, 4, 5)
         assertThat(getBestCookieScore(butterscotch), equalTo(2400000000L))
 
-        val cinnamon = Ingredient(2,2,2,2, 5)
+        val cinnamon = Ingredient(2, 2, 2, 2, 5)
         assertThat(getBestCookieScore(cinnamon), equalTo(1600000000L))
     }
 
@@ -38,9 +38,10 @@ class CookieScoreTest {
         val chocolate = Ingredient(0, 0, 5, -1, 8)
         val candy = Ingredient(0, -1, 0, 5, 8)
 
-        println(getBestCookieScore(sprinkles, butterscotch, chocolate, candy))
-        // 187854624 too high
-        // 21367368
+        assertThat(
+            getBestCookieScore(sprinkles, butterscotch, chocolate, candy),
+            equalTo(21367368)
+        )
     }
 
     @Test
@@ -48,7 +49,7 @@ class CookieScoreTest {
         val butterscotch = Ingredient(-1, -2, 6, 3, 8)
         val cinnamon = Ingredient(2, 3, -2, -1, 3)
 
-        assertThat(getBest500CaloryCookieScore(butterscotch, cinnamon), equalTo(57600000L))
+        assertThat(getBest500CalorieCookieScore(butterscotch, cinnamon), equalTo(57600000L))
     }
 
 
@@ -59,8 +60,10 @@ class CookieScoreTest {
         val chocolate = Ingredient(0, 0, 5, -1, 8)
         val candy = Ingredient(0, -1, 0, 5, 8)
 
-        println(getBest500CaloryCookieScore(sprinkles, butterscotch, chocolate, candy))
-        // 1766400
+        assertThat(
+            getBest500CalorieCookieScore(sprinkles, butterscotch, chocolate, candy),
+            equalTo(1766400)
+        )
     }
 
 }
