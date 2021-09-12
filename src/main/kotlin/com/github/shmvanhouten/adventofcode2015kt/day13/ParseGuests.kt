@@ -24,14 +24,12 @@ fun toFeelingsTowardsOthers(rawFeelings: List<List<String>>): Map<String, Happin
 private fun dropFullStop(name: String) = name.dropLast(1)
 
 fun parseHappiness(rawFeelings: List<String>): Happiness {
-    val modifier = when(rawFeelings[2]) {
+    val modifier = when (rawFeelings[2]) {
         "gain" -> 1
         "lose" -> -1
         else -> throw RuntimeException("unknown modifier ${rawFeelings[2]} in rawFeelings $rawFeelings")
     }
     return modifier * rawFeelings[3].toInt()
 }
-
-data class Guest(val name: String, val feelingsTowardOthers: Map<String, Happiness>)
 
 typealias Happiness = Int

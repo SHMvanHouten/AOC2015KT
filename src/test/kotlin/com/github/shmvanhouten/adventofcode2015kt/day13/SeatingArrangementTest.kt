@@ -9,11 +9,11 @@ class SeatingArrangementTest {
 
     @Nested
     inner class `Seating arrangement` {
-//        @Test
-//        internal fun `total happiness between two guests would be their hapinesses combined`() {
-//            givenFeelingsTowardEachOtherTotalHappinessIs(3, -54, -51)
-//            givenFeelingsTowardEachOtherTotalHappinessIs(3, 54, 57)
-//        }
+        @Test
+        internal fun `total happiness between two guests would be their hapinesses combined times 2 because they "surround" each other`() {
+            givenFeelingsTowardEachOtherTotalHappinessIs(3, -54, -102)
+            givenFeelingsTowardEachOtherTotalHappinessIs(4, 54, 116)
+        }
 
         @Test
         internal fun `calculate total happiness between four guests`() {
@@ -34,16 +34,16 @@ class SeatingArrangementTest {
             // 668
         }
 
-        //        private fun givenFeelingsTowardEachOtherTotalHappinessIs(
-//            bobsFeeling: Int,
-//            alicesFeeling: Int,
-//            expectedHappiness: Int
-//        ) {
-//            val bob = Guest("Bob", listOf("Alice" to bobsFeeling).toMap())
-//            val alice = Guest("Alice", listOf("Bob" to alicesFeeling).toMap())
-//
-//            assertThat(findOptimalHappiness(listOf(bob, alice)), equalTo(expectedHappiness))
-//        }
+        private fun givenFeelingsTowardEachOtherTotalHappinessIs(
+            bobsFeeling: Int,
+            alicesFeeling: Int,
+            expectedHappiness: Int
+        ) {
+            val bob = Guest("Bob", listOf("Alice" to bobsFeeling).toMap())
+            val alice = Guest("Alice", listOf("Bob" to alicesFeeling).toMap())
+
+            assertThat(findOptimalHappiness(listOf(bob, alice)), equalTo(expectedHappiness))
+        }
     }
 
     @Nested
