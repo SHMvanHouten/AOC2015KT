@@ -1,5 +1,7 @@
 package com.github.shmvanhouten.adventofcode2015kt.day23
 
+import com.github.shmvanhouten.adventofcode2015kt.util.isEven
+
 
 data class Instruction(
     val type: InstructionType,
@@ -56,8 +58,4 @@ enum class InstructionType {
 enum class Register {
     A,
     B
-}
-
-private fun Long.isEven(): Boolean {
-    return this % 2 == 0L
 }

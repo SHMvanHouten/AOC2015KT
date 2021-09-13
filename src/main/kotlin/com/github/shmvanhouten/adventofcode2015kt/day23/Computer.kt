@@ -4,10 +4,8 @@ class Computer(val instructions: List<Instruction> = emptyList()) {
     constructor(instructions: String) : this(parseInstructions(instructions))
 
     private val registers = Register.values().associateWith { 0L }.toMutableMap()
-    val a: Long
-        get() = registers[Register.A]!!
-    val b: Long
-        get() = registers[Register.B]!!
+    val a: Long by lazy { registers[Register.A]!! }
+    val b: Long by lazy { registers[Register.B]!! }
 
     fun withARegisterAt(i: Long): Computer {
         registers[Register.A] = i
@@ -18,15 +16,19 @@ class Computer(val instructions: List<Instruction> = emptyList()) {
         var pointer = 0
         while (pointer < instructions.size) {
             val instruction = instructions[pointer]
-            if (instruction.type.isAnEvalType()) {
-                updateRegister(instruction)
-                pointer++
+            when {
+                instruction.type.isAnEvalType() -> {
+                    updateRegister(instruction)
+                    pointer++
 
-            } else if (instruction.type.isConditionalJumpType()) {
-                pointer += evaluateJumpAmount(instruction)
+                }
+                instruction.type.isConditionalJumpType() -> {
+                    pointer += evaluateJumpAmount(instruction)
 
-            } else {
-                pointer += instruction.amount!!
+                }
+                else -> {
+                    pointer += instruction.amount!!
+                }
             }
         }
     }
